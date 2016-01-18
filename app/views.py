@@ -6,13 +6,19 @@ Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
 
+import os, time
 from app import app
-from flask import render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for
+from app import db
+from app.models import Profile
+from .forms import ProfileForm
+from werkzeug import secure_filename
 
 
 ###
 # Routing for your application.
 ###
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 @app.route('/')
 def home():
@@ -24,6 +30,41 @@ def home():
 def about():
     """Render the website's about page."""
     return render_template('about.html')
+
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    form = ProfileForm()
+    if request.method == 'POST':
+        # return "found post"
+        firstname = request.form['firstname']
+        lastname = request.form['lastname']
+        age = request.form['age']
+        sex = request.form['sex']
+        userid = 6000
+        # return "so far so good"
+        file = request.files['image']
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+        image = filename
+        profile = Profile(userid,firstname,lastname,age,sex)
+        # return "so far so good"
+        db.session.add(profile)
+        db.session.commit()
+        return "{} {}".format(firstname, lastname)
+    return render_template('profile.html', date=timeinfo(), form=form)
+def timeinfo():
+    return (time.strftime("%a, %d %b %Y"))
+
+@app.route('/profile/int:<userid>', methods=['GET', 'POST'])
+def viewprofile():
+    return "val"
+
+@app.route('/profiles')
+def profiles():
+    return "val"
+
+
 
 
 ###

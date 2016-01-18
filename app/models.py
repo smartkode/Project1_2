@@ -1,13 +1,19 @@
 from . import db
 
-class User(db.Model):
+class Profile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True)
-    email = db.Column(db.String(120), unique=True)
+    userid = db.Column(db.Integer, unique=True)
+    firstname = db.Column(db.String(80))
+    lastname = db.Column(db.String(80))
+    age = db.Column(db.Integer)
+    sex = db.Column(db.String(80))
 
-    def __init__(self, username, email):
-        self.username = username
-        self.email = email
+    def __init__(self, userid, firstname, lastname, age, sex):
+        self.userid = userid
+        self.firstname = firstname
+        self.lastname = lastname
+        self.age = age
+        self.sex = sex
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return 'Profile: {} {} {} {} {}'.format(self.userid, self.firstname, self.lastname, self.age, self.sex)
