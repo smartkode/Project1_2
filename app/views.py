@@ -76,7 +76,8 @@ def viewprofile(userid):
 
 @app.route('/profiles')
 def profiles():
-    return "val"
+    profiles = db.session.query(Profile).all()
+    return render_template('list_profiles.html', profiles=profiles)
 
 
 @app.route('/uploads/<filename>')
