@@ -9,6 +9,7 @@
 <div class="container">
 	<div id="main">
 		<form action="{{ url_for('profile') }}" method="POST" enctype="multipart/form-data">
+			{{ form.hidden_tag() }}
 			{{ form.firstname.label }} {{ form.firstname }} </br>
 			{{ form.lastname.label }} {{ form.lastname }} </br>
 			{{ form.age.label }} {{ form.age }} </br>

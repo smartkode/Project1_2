@@ -8,7 +8,7 @@ This file creates your application.
 
 import os, time
 from app import app
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 from app import db
 from app.models import Profile
 from .forms import ProfileForm
@@ -31,41 +31,49 @@ def about():
     """Render the website's about page."""
     return render_template('about.html')
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
     form = ProfileForm()
     if request.method == 'POST':
-        # return "found post"
-        firstname = request.form['firstname']
-        lastname = request.form['lastname']
-        age = request.form['age']
-        sex = request.form['sex']
-        userid = 6000
-        # return "so far so good"
         file = request.files['image']
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-
-        image = filename
-        profile = Profile(userid,firstname,lastname,age,sex)
-        # return "so far so good"
-        db.session.add(profile)
-        db.session.commit()
-        return "{} {}".format(firstname, lastname)
-    return render_template('profile.html', date=timeinfo(), form=form)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            firstname = request.form['firstname']
+            lastname = request.form['lastname']
+            age = request.form['age']
+            sex = request.form['sex']
+            userid = 6001
+            image = filename
+            profile = Profile(userid,firstname,lastname,age,sex,image)
+            # return "so far so good"
+            db.session.add(profile)
+            db.session.commit()
+            return "{} {}".format(firstname, lastname)
+    return render_template('profile.html', form=form)
 def timeinfo():
     return (time.strftime("%a, %d %b %Y"))
 
-@app.route('/profile/int:<userid>', methods=['GET', 'POST'])
-def viewprofile():
-    return "val"
+@app.route('/profile/<int:userid>', methods=['GET', 'POST'])
+def viewprofile(userid):
+    profile = db.session.query(Profile).get(userid)
+    username = ((profile.firstname + profile.lastname).lower()).replace(" ", "")
+    return render_template('profile_view.html', date=timeinfo(), profile=profile, username=username)
+    
 
 @app.route('/profiles')
 def profiles():
     return "val"
 
 
-
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'],
+                               filename)
 
 ###
 # The functions below should be applicable to all Flask apps.
