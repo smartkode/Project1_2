@@ -8,12 +8,36 @@
 {% block main %}
 <div class="container">
 	<div id="main">
+
+		{% for message in get_flashed_messages() %}
+	    	<div class="flash">{{ message }}</div>
+		{% endfor %}
+		<h2>Create Profile</h2>
 		<form action="{{ url_for('profile') }}" method="POST" enctype="multipart/form-data">
 			{{ form.hidden_tag() }}
+			{% for message in form.firstname.errors %}
+			  <div class="flash">{{ message }}</div>
+			{% endfor %}
 			{{ form.firstname.label }} {{ form.firstname }} </br>
+
+			{% for message in form.lastname.errors %}
+			  <div class="flash">{{ message }}</div>
+			{% endfor %}
 			{{ form.lastname.label }} {{ form.lastname }} </br>
+
+			{% for message in form.age.errors %}
+			  <div class="flash">{{ message }}</div>
+			{% endfor %}
 			{{ form.age.label }} {{ form.age }} </br>
+
+			{% for message in form.sex.errors %}
+			  <div class="flash">{{ message }}</div>
+			{% endfor %}
 			{{ form.sex.label }} {{ form.sex }} </br>
+
+			{% for message in form.image.errors %}
+			  <div class="flash">{{ message }}</div>
+			{% endfor %}
 			{{ form.image.label }} {{ form.image}} </br>
 			{{ form.create }}
 		</form>

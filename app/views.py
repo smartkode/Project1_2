@@ -8,7 +8,7 @@ This file creates your application.
 
 import os, time
 from app import app
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, flash
 from app import db
 from app.models import Profile
 from .forms import ProfileForm
@@ -39,21 +39,30 @@ def allowed_file(filename):
 def profile():
     form = ProfileForm()
     if request.method == 'POST':
-        file = request.files['image']
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            firstname = request.form['firstname']
-            lastname = request.form['lastname']
-            age = request.form['age']
-            sex = request.form['sex']
-            userid = 6001
-            image = filename
-            profile = Profile(userid,firstname,lastname,age,sex,image)
-            # return "so far so good"
-            db.session.add(profile)
-            db.session.commit()
-            return "{} {}".format(firstname, lastname)
+        if form.validate():
+            file = request.files['image']
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                firstname = request.form['firstname']
+                lastname = request.form['lastname']
+                age = request.form['age']
+                sex = request.form['sex']
+                userid = 62007000 
+                check = db.session.execute('SELECT COUNT(id) FROM profile')
+                for r in check:
+                    result = r[0]
+                if result > 0:
+                    last_user = db.session.query(Profile).get(result)
+                    if last_user.userid >= userid:
+                        userid = last_user.userid + 1
+                image = filename
+                profile = Profile(userid,firstname,lastname,age,sex,image)
+                db.session.add(profile)
+                db.session.commit()
+                return "{} {}".format(firstname, lastname)
+        else:
+            flash("You had an error!")
     return render_template('profile.html', form=form)
 def timeinfo():
     return (time.strftime("%a, %d %b %Y"))
