@@ -61,7 +61,8 @@ def profile():
                 db.session.add(profile)
                 db.session.commit()
                 flash("Profile created successfully!")
-                return render_template('profile.html', form=form)
+                return "{} {} {}".format(image, app.config['UPLOAD_FOLDER'], os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                # return render_template('profile.html', form=form)
         else:
             flash("You had an error!")
     return render_template('profile.html', form=form)
