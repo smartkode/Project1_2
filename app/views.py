@@ -60,7 +60,8 @@ def profile():
                 profile = Profile(userid,firstname,lastname,age,sex,image)
                 db.session.add(profile)
                 db.session.commit()
-                return "{} {}".format(firstname, lastname)
+                flash("Profile created successfully!")
+                return render_template('profile.html', form=form)
         else:
             flash("You had an error!")
     return render_template('profile.html', form=form)
@@ -74,10 +75,17 @@ def viewprofile(userid):
     return render_template('profile_view.html', date=timeinfo(), profile=profile, username=username)
     
 
-@app.route('/profiles')
+@app.route('/profiles', methods=['GET', 'POST'])
 def profiles():
     profiles = db.session.query(Profile).all()
     return render_template('list_profiles.html', profiles=profiles)
+
+@app.route('/test', methods=['GET'])
+def test():
+    return render_template('test.html')
+#-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-\-/-\-/-\-/-\-/-\-/-\-/-\-/
+# get vars
+# request.args.get("username")
 
 
 @app.route('/uploads/<filename>')
