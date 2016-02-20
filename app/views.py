@@ -6,7 +6,7 @@ Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
 
-import os, time
+import os, time, json
 from app import app
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, flash
 from app import db
@@ -43,30 +43,25 @@ def profile():
             file = request.files['image']
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                loc = os.getcwd() + '/static/img'
-                # return os.getcwd()
-
-                file.save(os.path.join(loc, filename))
-
-
+                # return os.path.abspath('.')
                 # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename)) **create bucket on AWS
-                # firstname = request.form['firstname']
-                # lastname = request.form['lastname']
-                # age = request.form['age']
-                # sex = request.form['sex']
-                # userid = 62007000 
-                # check = db.session.execute('SELECT COUNT(id) FROM profile')
-                # for r in check:
-                #     result = r[0]
-                # if result > 0:
-                #     last_user = db.session.query(Profile).get(result)
-                #     if last_user.userid >= userid:
-                #         userid = last_user.userid + 1
-                # image = filename
-                # profile = Profile(userid,firstname,lastname,age,sex,image)
-                # db.session.add(profile)
-                # db.session.commit()
-                # flash("Profile created successfully!")
+                firstname = request.form['firstname']
+                lastname = request.form['lastname']
+                age = request.form['age']
+                sex = request.form['sex']
+                userid = 62007000 
+                check = db.session.execute('SELECT COUNT(id) FROM profile')
+                for r in check:
+                    result = r[0]
+                if result > 0:
+                    last_user = db.session.query(Profile).get(result)
+                    if last_user.userid >= userid:
+                        userid = last_user.userid + 1
+                image = filename
+                profile = Profile(userid,firstname,lastname,age,sex,image)
+                db.session.add(profile)
+                db.session.commit()
+                flash("Profile created successfully!")
                 # return "{} {} {}".format(image, app.config['UPLOAD_FOLDER'], os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 return render_template('profile.html', form=form)
         else:
@@ -75,19 +70,51 @@ def profile():
 def timeinfo():
     return (time.strftime("%a, %d %b %Y"))
 
+
+# from werkzeug.routing import Map, Rule, RuleTemplate, RuleFactory
+
+# url_map = Map([
+#     Rule('/profile', endpoint='#select_language'),
+#     Subdomain('<string(length=2):lang_code>', [
+#         Rule('/', endpoint='index'),
+#         Rule('/about', endpoint='about'),
+#         Rule('/help', endpoint='help')
+#     ])
+# ])
+# @app.route('/profile/<string:userid>')
 @app.route('/profile/<int:userid>', methods=['GET', 'POST'])
 def viewprofile(userid):
     profile = db.session.query(Profile).get(userid)
     username = ((profile.firstname + profile.lastname).lower()).replace(" ", "")
+    if request.method == 'POST' and request.headers['Content-Type'] == 'application/json':
+        prof = dict([("userid", profile.userid), ("username", username), ("image", profile.image), ("age", profile.age), ("sex", profile.sex)])
+        return json.dumps(prof, sort_keys=False, indent=4)
+    
     return render_template('profile_view.html', date=timeinfo(), profile=profile, username=username)
+    # if type(userid) == str:
+        
+    #     userid = int(userid)
+    #     profile = db.session.query(Profile).get(userid)
+    #     username = ((profile.firstname + profile.lastname).lower()).replace(" ", "")
+    #     return render_template('profile_view.html', date=timeinfo(), profile=profile, username=username)
+    # if request.method == 'POST' and request.headers['Content-Type'] == 'application/json':
+    #     return "works"
+    # return render_template('profile_view.html', date=timeinfo(), profile=profile, username=username)
     
 
 @app.route('/profiles', methods=['GET', 'POST'])
 def profiles():
     profiles = db.session.query(Profile).all()
+    prof_list = []
+    for p in profiles:
+        username = ((p.firstname + p.lastname).lower()).replace(" ", "")
+        prof_list.append(dict([("username", username), ("userid", p.userid)]))
+    prof_dict = dict([("users",prof_list)])
+    if request.method == 'POST' and request.headers['Content-Type'] == 'application/json':
+        return json.dumps(prof_dict, sort_keys=False, indent=4)
     return render_template('list_profiles.html', profiles=profiles)
 
-@app.route('/test', methods=['GET'])
+@app.route('/test', methods=['GET'])    
 def test():
     return render_template('test.html')
 #-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-\-/-\-/-\-/-\-/-\-/-\-/-\-/
