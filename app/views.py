@@ -44,27 +44,27 @@ def profile():
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
                 # return os.getcwd()
-                return os.path.abspath('../../')
-                # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename)) **create bucket on AWS
-                # firstname = request.form['firstname']
-                # lastname = request.form['lastname']
-                # age = request.form['age']
-                # sex = request.form['sex']
-                # userid = 62007000 
-                # check = db.session.execute('SELECT COUNT(id) FROM profile')
-                # for r in check:
-                #     result = r[0]
-                # if result > 0:
-                #     last_user = db.session.query(Profile).get(result)
-                #     if last_user.userid >= userid:
-                #         userid = last_user.userid + 1
-                # image = filename
-                # profile = Profile(userid,firstname,lastname,age,sex,image)
-                # db.session.add(profile)
-                # db.session.commit()
-                # flash("Profile created successfully!")
-                # # return "{} {} {}".format(image, app.config['UPLOAD_FOLDER'], os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                # return render_template('profile.html', form=form)
+                # return os.path.abspath('../../')
+                file.save(os.path.join("/app/static/img", filename)) #**create bucket on AWS
+                firstname = request.form['firstname']
+                lastname = request.form['lastname']
+                age = request.form['age']
+                sex = request.form['sex']
+                userid = 62007000 
+                check = db.session.execute('SELECT COUNT(id) FROM profile')
+                for r in check:
+                    result = r[0]
+                if result > 0:
+                    last_user = db.session.query(Profile).get(result)
+                    if last_user.userid >= userid:
+                        userid = last_user.userid + 1
+                image = filename
+                profile = Profile(userid,firstname,lastname,age,sex,image)
+                db.session.add(profile)
+                db.session.commit()
+                flash("Profile created successfully!")
+                # return "{} {} {}".format(image, app.config['UPLOAD_FOLDER'], os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                return render_template('profile.html', form=form)
         else:
             flash("You had an error!")
     return render_template('profile.html', form=form)
