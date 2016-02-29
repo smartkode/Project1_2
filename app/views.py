@@ -43,9 +43,8 @@ def profile():
             file = request.files['image']
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                # return os.getcwd()
-                # return os.path.abspath('../../')
-                file.save(os.path.join("/app/static/img", filename)) #**create bucket on AWS
+                # return os.path.abspath('.')
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename)) 
                 firstname = request.form['firstname']
                 lastname = request.form['lastname']
                 age = request.form['age']
