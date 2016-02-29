@@ -124,8 +124,7 @@ def test():
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               filename)
+    return app.send_static_file(filename)
 
 ###
 # The functions below should be applicable to all Flask apps.
