@@ -10,7 +10,7 @@
 <div>
 	<ol>
 		{% for i in profiles %}
-		<a href="{{ url_for('viewprofile', userid=i.id) }}"><li><img src="{{ url_for('uploaded_file', filename=i.image) }}"> {{ i.firstname }}</li></a>
+		<a href="{{ url_for('viewprofile', userid=i.id) }}"><li><img src="{{ url_for('uploaded_file', filename=i.image) }}"> <p>{{ i.firstname }}</p></li></a>
 		{% endfor %}
 	</ol>
 </div>

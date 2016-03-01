@@ -1,6 +1,6 @@
 from flask.ext.wtf import Form
 from wtforms.fields import TextField, FileField, SelectField, SubmitField, IntegerField
-# other fields include PasswordField
+
 from wtforms.validators import Required, Email, Length, NumberRange
 
 class ProfileForm(Form):
