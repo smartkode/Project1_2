@@ -75,7 +75,7 @@ def viewprofile(userid):
     if request.method == 'POST' and request.headers['Content-Type'] == 'application/json':
         prof = dict([("userid", profile.userid), ("username", username), ("image", profile.image), ("age", profile.age), ("sex", profile.sex)])
         return jsonify(prof)
-    return render_template('profile_view.html', date=timeinfo(), profile=profile, username=username)  
+    return render_template('profile_view.html', profile=profile, username=username)  
 
 @app.route('/profiles', methods=['GET', 'POST'])
 def profiles():
