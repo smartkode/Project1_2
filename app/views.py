@@ -49,6 +49,7 @@ def profile():
                 sex = request.form['sex']
                 userid = 62007000 
                 check = db.session.execute('SELECT COUNT(id) FROM profile')
+                added = timeinfo()
                 for r in check:
                     result = r[0]
                 if result > 0:
@@ -56,7 +57,7 @@ def profile():
                     if last_user.userid >= userid:
                         userid = last_user.userid + 1
                 image = filename
-                profile = Profile(userid,firstname,lastname,age,sex,image)
+                profile = Profile(userid,firstname,lastname,age,sex,added,image)
                 db.session.add(profile)
                 db.session.commit()
                 flash("Profile created successfully!")

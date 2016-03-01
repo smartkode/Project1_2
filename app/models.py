@@ -7,14 +7,16 @@ class Profile(db.Model):
     lastname = db.Column(db.String(80))
     age = db.Column(db.Integer)
     sex = db.Column(db.String(80))
+    added = db.Column(db.String(80))
     image = db.Column(db.String(240))
 
-    def __init__(self, userid, firstname, lastname, age, sex, image):
+    def __init__(self, userid, firstname, lastname, age, sex, added, image):
         self.userid = userid
         self.firstname = firstname
         self.lastname = lastname
         self.age = age
         self.sex = sex
+        self.added = added
         self.image = image
 
     def __repr__(self):
