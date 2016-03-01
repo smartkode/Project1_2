@@ -73,7 +73,8 @@ def viewprofile(userid):
     profile = db.session.query(Profile).get(userid)
     username = ((profile.firstname + profile.lastname).lower()).replace(" ", "")
     if request.method == 'POST' and request.headers['Content-Type'] == 'application/json':
-        prof = dict([("userid", profile.userid), ("username", username), ("image", profile.image), ("age", profile.age), ("sex", profile.sex)])
+        prof = dict([("userid", profile.userid), ("username", username), ("image", profile.image), ("age", profile.age), ("sex", profile.sex), ("profile_add_on", profile.added),\
+            ("high_score", profile.highscore), ("tdollars", profile.tdollars)])
         return jsonify(prof)
     return render_template('profile_view.html', profile=profile, username=username)  
 

@@ -8,6 +8,8 @@ class Profile(db.Model):
     age = db.Column(db.Integer)
     sex = db.Column(db.String(80))
     added = db.Column(db.String(80))
+    highscore = db.Column(db.String(80), default="")
+    tdollars = db.Column(db.String(80), default="")
     image = db.Column(db.String(240))
 
     def __init__(self, userid, firstname, lastname, age, sex, added, image):
